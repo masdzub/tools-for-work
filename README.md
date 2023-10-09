@@ -1,4 +1,3 @@
-# Tools for Work
 
 ## **Tools for Work**
 
