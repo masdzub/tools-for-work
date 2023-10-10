@@ -10,15 +10,6 @@ RESET='\033[0m'
 # Default DNS server for A, AAAA, MX, NS, TXT records
 default_dns="8.8.8.8"
 
-# Check if dig command is installed
-check_dig_command() {
-  if ! command -v dig &> /dev/null; then
-    echo -e "${RED}Error: Perintah 'dig' tidak ditemukan.${RESET}"
-    echo "Instal 'dig' terlebih dahulu sebelum menjalankan skrip ini."
-    exit 1
-  fi
-}
-
 # Function to prompt for domain if not provided
 prompt_for_domain() {
   if [ -z "$domain" ]; then
@@ -43,13 +34,6 @@ display_ptr_records() {
   local ip_address=$1
   local ptr_info=$(dig +short -x $ip_address)
   display_records "PTR" "$ptr_info"
-}
-
-# Function to display public IP address
-display_public_ip() {
-  local public_ip=$(curl -s https://api64.ipify.org?format=text)
-  echo -e "\n${YELLOW}[Informasi IP Publik]${RESET}"
-  echo -e "Public IP Address: ${GREEN}$public_ip${RESET}"
 }
 
 # Function to display SSL information
@@ -107,6 +91,19 @@ print_help() {
   exit 0
 }
 
+# Function to check domain status
+check_domain_status() {
+  local domain_status=$(whois $domain | grep "serverHold\|clientHold")
+
+  if [[ $domain_status == *"clientHold"* ]]; then
+    echo -e "\n${RED}[Status Domain]${RESET}"
+    echo -e "${YELLOW}Status:${RESET} ${RED}clientHold${RESET}\n\n[Ditangguhkan oleh registrar atau penyedia domain]\n"
+  elif [[ $domain_status == *"serverHold"* ]]; then
+    echo -e "\n${RED}[Status Domain]${RESET}"
+    echo -e "${YELLOW}Status:${RESET} ${RED}serverHold${RESET}\n\n[Ditangguhkan oleh registry]\n"
+  fi
+}
+
 # Main script logic
 check_dig_command
 
@@ -138,9 +135,9 @@ prompt_for_domain
 dns_server=${dns_server:-$default_dns}
 
 echo -e "\n${YELLOW}============================${RESET}"
-echo -e "${CYAN}Informasi DNS untuk $domain${RESET}"
-echo -e "${YELLOW}DNS Server: $dns_server${RESET}"
-echo -e "${YELLOW}============================${RESET}"
+echo -e "${CYAN}Domain Info${RESET}\t: ${GREEN}$domain${RESET}"
+echo -e "${YELLOW}DNS Server\t:${RESET} ${GREEN}$dns_server${RESET}"
+echo -e "${YELLOW}============================\n${RESET}"
 
 # Check if dig command is available before proceeding
 if command -v dig &> /dev/null; then
@@ -150,10 +147,13 @@ else
   echo "Instal 'dig' terlebih dahulu sebelum menjalankan skrip ini."
 fi
 
-# Display public IP address
-display_public_ip
+# Check domain status if A and NS records are missing
+if [ -z "$a_record" ] && [ -z "$ns_record" ]; then
+  echo -e "\n${YELLOW}============================${RESET}"
+  check_domain_status
+fi
 
-echo -e "\n${YELLOW}============================${RESET}"
-display_ssl_info
-
-echo -e "\n${YELLOW}============================${RESET}"
+if [ -n "$a_record" ] && [ -n "$ns_record" ]; then
+  echo -e "\n${YELLOW}============================\n${RESET}"
+  display_ssl_info
+fi
