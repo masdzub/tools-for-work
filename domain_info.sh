@@ -104,9 +104,6 @@ check_domain_status() {
   fi
 }
 
-# Main script logic
-check_dig_command
-
 while [[ $# -gt 0 ]]; do
   case "$1" in
     -d|--domain)
