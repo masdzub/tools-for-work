@@ -84,6 +84,7 @@ display_dns_info() {
 
 # Function to print help
 print_help() {
+  echo ""
   echo -e "${CYAN}Usage:${RESET} $(basename "$0") ${YELLOW}[-d|--domain domain] [-s|--server dns_server] [-h|--help]${RESET}"
   echo -e "  ${YELLOW}-d, --domain domain${RESET}       Nama domain yang akan diquery"
   echo -e "  ${YELLOW}-s, --server dns_server${RESET}   DNS server kustom untuk A, AAAA, MX, NS, TXT records (opsional)"
@@ -119,15 +120,29 @@ check_status_registration() {
   fi
 }
 
+error_flag=0  # Inisialisasi variabel error_flag
+
 while [[ $# -gt 0 ]]; do
   case "$1" in
     -d|--domain)
-      domain=$2
-      shift 2
+      if [[ -n $2 ]]; then
+        domain=$2
+        shift 2
+      else
+        echo -e "${RED}Opsi -d|--domain memerlukan argumen.${RESET}" >&2
+        error_flag=1
+        break
+      fi
       ;;
     -s|--server)
-      dns_server=$2
-      shift 2
+      if [[ -n $2 ]]; then
+        dns_server=$2
+        shift 2
+      else
+        echo -e "${RED}Opsi -s|--server memerlukan argumen.${RESET}" >&2
+        error_flag=1
+        break
+      fi
       ;;
     -h|--help)
       print_help
@@ -135,12 +150,19 @@ while [[ $# -gt 0 ]]; do
       ;;
     *)
       echo -e "${RED}Pilihan yang tidak valid: $1${RESET}" >&2
-      print_help
-      exit 1
+      error_flag=1
+      break
       ;;
   esac
 done
 
+if [[ $error_flag -eq 1 ]]; then
+  print_help
+  exit 1
+fi
+
+
+# Ask the domain if domain not given using option
 prompt_for_domain
 
 # Set default DNS server if not provided
@@ -148,7 +170,7 @@ dns_server=${dns_server:-$default_dns}
 
 echo -e "\n${YELLOW}============================${RESET}"
 echo -e "${CYAN}Domain Info${RESET}\t: ${GREEN}$domain${RESET}"
-echo -e "${CYAN}DNS Server\t:${RESET} ${GREEN}$dns_server${RESET}"
+echo -e "${CYAN}DNS Server\t${RESET}: ${GREEN}$dns_server${RESET}"
 echo -e "${YELLOW}============================\n${RESET}"
 
 if command -v dig &> /dev/null && command -v whois &> /dev/null; then
