@@ -25,7 +25,7 @@ display_records() {
     echo -e "${CYAN}$record_type record:${RESET}"
     echo "$record_data" | sed 's/^/  /'
   else
-    echo -e "${RED}Tidak ada $record_type record untuk $domain${RESET}"
+    echo -e "${RED}$record_type record : - ${RESET}"
   fi
 }
 
