@@ -1,3 +1,5 @@
 build/
 dist/
 info_domain.spec
+list_domains.txt
+cf_domains.txt
