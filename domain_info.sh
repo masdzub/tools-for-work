@@ -144,7 +144,7 @@ dns_server=${dns_server:-$default_dns}
 
 echo -e "\n${YELLOW}============================${RESET}"
 echo -e "${CYAN}Domain Info${RESET}\t: ${GREEN}$domain${RESET}"
-echo -e "${YELLOW}DNS Server\t:${RESET} ${GREEN}$dns_server${RESET}"
+echo -e "${CYAN}DNS Server\t:${RESET} ${GREEN}$dns_server${RESET}"
 echo -e "${YELLOW}============================\n${RESET}"
 
 if command -v dig &> /dev/null && command -v whois &> /dev/null; then
