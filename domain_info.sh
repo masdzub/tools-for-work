@@ -55,7 +55,7 @@ display_dns_info() {
   display_records "A" "$a_record"
 
   aaaa_record=$(dig +short @$dns_server $domain AAAA)
-  display_records "AAAA (IPv6)" "$aaaa_record"
+  display_records "AAAA" "$aaaa_record"
 
   mx_record=$(dig +short @$dns_server $domain MX)
   display_records "MX" "$mx_record"
@@ -104,6 +104,17 @@ check_domain_status() {
   fi
 }
 
+# Function to check domain status registration
+check_status_registration() {
+  local domain_regist=$(whois $domain | grep -Ei "(No match for domain|DOMAIN NOT FOUND|No Data Found|Domain not found|is available|The queried object does not exist|is not registered|not been registered)")
+
+  if [[ -n "$domain_regist" ]]; then
+    echo "Domain belum terdaftar"
+  else
+    display_dns_info $dns_server
+  fi
+}
+
 while [[ $# -gt 0 ]]; do
   case "$1" in
     -d|--domain)
@@ -136,21 +147,27 @@ echo -e "${CYAN}Domain Info${RESET}\t: ${GREEN}$domain${RESET}"
 echo -e "${YELLOW}DNS Server\t:${RESET} ${GREEN}$dns_server${RESET}"
 echo -e "${YELLOW}============================\n${RESET}"
 
-# Check if dig command is available before proceeding
-if command -v dig &> /dev/null; then
-  display_dns_info $dns_server
-else
+if command -v dig &> /dev/null && command -v whois &> /dev/null; then
+  check_status_registration
+elif ! command -v dig &> /dev/null && ! command -v whois &> /dev/null; then
+  echo -e "${RED}Error: Perintah 'dig' dan 'whois' tidak ditemukan.${RESET}"
+  echo "Instal 'dig' dan 'whois' terlebih dahulu sebelum menjalankan skrip ini."
+elif ! command -v dig &> /dev/null; then
   echo -e "${RED}Error: Perintah 'dig' tidak ditemukan.${RESET}"
   echo "Instal 'dig' terlebih dahulu sebelum menjalankan skrip ini."
+else
+  echo -e "${RED}Error: Perintah 'whois' tidak ditemukan.${RESET}"
+  echo "Instal 'whois' terlebih dahulu sebelum menjalankan skrip ini."
+fi
+
+
+if [ -n "$a_record" ] && [ -n "$ns_record" ]; then
+  display_ssl_info
+  echo -e "${YELLOW}============================\n${RESET}"
 fi
 
 # Check domain status if A and NS records are missing
 if [ -z "$a_record" ] && [ -z "$ns_record" ]; then
   echo -e "\n${YELLOW}============================${RESET}"
   check_domain_status
-fi
-
-if [ -n "$a_record" ] && [ -n "$ns_record" ]; then
-  echo -e "\n${YELLOW}============================\n${RESET}"
-  display_ssl_info
 fi
