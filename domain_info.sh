@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# domain information
+# (c) 2023 Dzubayyan Ahmad
+# tools for work
+
 # ANSI color codes
 RED='\033[1;31m'
 GREEN='\033[1;32m'
