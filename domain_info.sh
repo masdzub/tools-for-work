@@ -12,7 +12,7 @@ CYAN='\033[1;36m'
 RESET='\033[0m'
 
 # Default DNS server for A, AAAA, MX, NS, TXT records
-default_dns="8.8.8.8"
+default_dns="1.1.1.1"
 
 # Function to prompt for domain if not provided
 prompt_for_domain() {
