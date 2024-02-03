@@ -64,7 +64,7 @@ display_dns_info() {
   mx_record=$(dig +short @$dns_server $domain MX)
   display_records "MX" "$mx_record"
 
-  mail_record=$(dig @dns_server mail.$domain A | awk '{print $4 , $5}')
+  mail_record=$(dig @$dns_server mail.$domain A | awk '{print $4 "\t" $5}')
   display_records "MAIL" "$mail_record"
 
   txt_record=$(dig +short @$dns_server $domain TXT)
