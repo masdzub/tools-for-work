@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Tool for check MySQL size 
-# (c) 2023 Dzub DomaiNesia
+# (c) 2023 Dzubayyan Ahmad
 
 # Colors
 RED='\033[0;31m'
