@@ -25,7 +25,7 @@ display_error() {
 display_help() {
   echo -e "${purple}Usage: $0 [-d <Domain>] [-c] [-h]${reset}"
   echo -e "\n${cyan}Options:${reset}"
-  echo -e "  ${blue}-d <domain or IP>${reset}\tPerform DNS lookup for the specified domain."
+  echo -e "  ${blue}-d <domain>${reset}\tPerform DNS lookup for the specified domain."
   echo -e "  ${blue}-c${reset}\t\t\tCustom user and port to SSH after performing DNS lookup."
   echo -e "  ${blue}-h${reset}\t\t\tDisplay this help message."
   echo -e "\n${cyan}Example:${reset}"
