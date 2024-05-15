@@ -52,6 +52,27 @@ The compiled binary will be available in the **`dist`** directory. You can then 
 
 **Note:** Ensure that Python is in your system's PATH before compiling.
 
+### Windows Plesk Generate Fix License
+
+You can run the script with the following options:
+
+- `-d <domain_name>`: Specify the server domain name.
+- `-h`: Display the help message.
+
+If the `-d` option is not provided, the script will prompt you to enter the server domain name.
+
+#### Example
+
+```bash
+./plesk_management.sh -d example.com
+```
+
+#### Without the `-d` option
+
+```bash
+./plesk_management.sh
+```
+
 ### **Disclaimer**
 
 These tools are provided as-is and without warranty. Use them responsibly and only on systems you are authorized to access.
