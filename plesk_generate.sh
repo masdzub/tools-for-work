@@ -35,8 +35,12 @@ if [ -z "$server_domain" ]; then
     usage
 fi
 
+echo -e "\n# open restriction"
+echo -e "plesk bin poweruser --off -lock false"
+echo -e "plesk bin poweruser --on -simple false -lock false"
+
 echo -e "\n# Backup Plesk sys db"
-echo -e "plesk db dump psa > /root/psa_dump.sql \n\n"
+echo -e "plesk db dump psa > C:\psa_dump.sql\n\n"
 
 echo -e "# Make admin owner of all subscriptions "
 echo -e "foreach (\$subscription in plesk bin subscription --list) {plesk bin subscription --change-owner \$subscription -owner admin}\n\n"
