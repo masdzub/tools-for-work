@@ -13,6 +13,7 @@ This tool allows you to change the SSH port of your system. This can be useful f
 bash change_port_ssh.sh 
 
 ```
+---
 
 ### **Domain Info**
 
@@ -27,6 +28,8 @@ bash domain_info.sh -d yourdomain -s dnsresolver
 ```
 
 Replace **`[domain_name]`** with the domain you want to gather information about.
+
+---
 
 ### **Info Domain**
 
@@ -50,6 +53,8 @@ The compiled binary will be available in the **`dist`** directory. You can then 
 
 **Note:** Ensure that Python is in your system's PATH before compiling.
 
+---
+
 ### **Domain SSH**
 Perform DNS lookup from a domain and initiate SSH connections to the associated IP servers.
 ```
@@ -63,7 +68,9 @@ Options:
 Example:
   ./domain_ssh.sh -d example.com -c
  ```
-=======
+
+---
+
 ### Windows Plesk Generate Fix License
 
 You can run the script with the following options:
@@ -84,6 +91,60 @@ If the `-d` option is not provided, the script will prompt you to enter the serv
 ```bash
 ./plesk_management.sh
 ```
+
+---
+
+## **Reseller Usage**
+
+This script calculates and displays disk usage for each reseller (excluding 'root') on your system.
+
+```bash
+./reseller_usage.sh
+```
+
+Ex. Output : 
+```bash
+Example Output:
+python
+Copy code
+Checking reseller example1
+Checking reseller example2
+...
+Done
+
+Reseller Disk Usage:
+reseller1: 10.50 GB
+reseller2: 5.75 GB
+...
+```
+
+---
+
+## **Reseller Size**
+
+This script calculates usage statistics for accounts managed by a specific reseller in cPanel.
+```bash
+./reseller_size.sh <reseller> <mail|non-mail>
+```
+> Replace `<reseller>` with the name of the reseller and `<mail|non-mail>` with either 'mail' to calculate mail usage or 'non-mail' to calculate usage excluding mail.
+
+### Example:
+
+Calculate mail usage for a reseller named 'myreseller':
+```bash
+./reseller_size.sh myreseller mail
+```
+
+Calculate non-mail usage for a different reseller:
+```bash
+./reseller_size.sh anotherreseller non-mail
+```
+
+### Notes
+
+- This script requires access to system files (`/etc/trueuserowners`, `/var/cpanel/users/`, etc.) typically found on cPanel systems.
+- Results are displayed in gigabytes (GB) and exclude usage results smaller than 10 megabytes (MB).
+
 
 ### **Disclaimer**
 
