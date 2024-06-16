@@ -63,6 +63,27 @@ Options:
 Example:
   ./domain_ssh.sh -d example.com -c
  ```
+=======
+### Windows Plesk Generate Fix License
+
+You can run the script with the following options:
+
+- `-d <domain_name>`: Specify the server domain name.
+- `-h`: Display the help message.
+
+If the `-d` option is not provided, the script will prompt you to enter the server domain name.
+
+#### Example
+
+```bash
+./plesk_management.sh -d example.com
+```
+
+#### Without the `-d` option
+
+```bash
+./plesk_management.sh
+```
 
 ### **Disclaimer**
 

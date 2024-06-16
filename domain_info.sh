@@ -17,7 +17,7 @@ default_dns="1.1.1.1"
 # Function to prompt for domain if not provided
 prompt_for_domain() {
   if [ -z "$domain" ]; then
-    read -p "Masukkan nama domain: " domain
+    read -p "Enter the domain name: " domain
   fi
 }
 
@@ -29,7 +29,7 @@ display_records() {
     echo -e "${CYAN}$record_type record:${RESET}"
     echo "$record_data" | sed 's/^/  /'
   else
-    echo -e "${RED}$record_type record : - ${RESET}"
+    echo -e "${RED}$record_type record: - ${RESET}"
   fi
 }
 
@@ -42,12 +42,12 @@ display_ptr_records() {
 
 # Function to display SSL information
 display_ssl_info() {
-  local openssl_info=$(openssl s_client -showcerts -connect $domain:443 </dev/null 2>/dev/null | openssl x509 -noout -issuer -dates -subject)
+  local openssl_info=$(openssl s_client -showcerts -connect $domain:443 </dev/null 2>/dev/null | openssl x509 -noout -issuer -dates -subject 2>/dev/null)
   if [ $? -eq 0 ]; then
-    echo -e "\n${CYAN}[Informasi SSL]${RESET}"
+    echo -e "\n${CYAN}[SSL Information]${RESET}"
     echo "$openssl_info" | sed 's/^/  /'
   else
-    echo -e "${RED}Tidak ada informasi SSL yang tersedia atau tidak dapat dibaca untuk $domain pada port 443.${RESET}"
+    echo -e "${RED}No SSL information available or cannot be read for $domain on port 443.${RESET}"
   fi
 }
 
@@ -74,12 +74,12 @@ display_dns_info() {
   display_records "NS" "$ns_record"
 
   if [ -n "$a_record" ]; then
-    echo -e "\n${CYAN}[Informasi PTR untuk IPv4]${RESET}"
+    echo -e "\n${CYAN}[PTR Information for IPv4]${RESET}"
     display_ptr_records "$a_record"
   fi
 
   if [ -n "$aaaa_record" ]; then
-    echo -e "\n${CYAN}[Informasi PTR untuk IPv6]${RESET}"
+    echo -e "\n${CYAN}[PTR Information for IPv6]${RESET}"
     display_ptr_records "$aaaa_record"
   fi
 }
@@ -88,11 +88,11 @@ display_dns_info() {
 print_help() {
   echo ""
   echo -e "${CYAN}Usage:${RESET} $(basename "$0") ${YELLOW}[-d|--domain domain] [-s|--server dns_server] [-h|--help]${RESET}"
-  echo -e "  ${YELLOW}-d, --domain domain${RESET}       Nama domain yang akan diquery"
-  echo -e "  ${YELLOW}-s, --server dns_server${RESET}   DNS server kustom untuk A, AAAA, MX, NS, TXT records (opsional)"
-  echo -e "  ${YELLOW}-h, --help${RESET}                Menampilkan informasi bantuan"
+  echo -e "  ${YELLOW}-d, --domain domain${RESET}       Domain name to be queried"
+  echo -e "  ${YELLOW}-s, --server dns_server${RESET}   Custom DNS server for A, AAAA, MX, NS, TXT records (optional)"
+  echo -e "  ${YELLOW}-h, --help${RESET}                Display help information"
   echo ""
-  echo -e "Contoh Penggunaan:"
+  echo -e "Example Usage:"
   echo -e "  $(basename "$0") ${YELLOW}-d example.com${RESET}"
   echo -e "  $(basename "$0") ${YELLOW}-d example.com -s 1.1.1.1${RESET}"
   exit 0
@@ -103,26 +103,26 @@ check_domain_status() {
   local domain_status=$(whois $domain | grep "serverHold\|clientHold")
 
   if [[ $domain_status == *"clientHold"* ]]; then
-    echo -e "\n${RED}[Status Domain]${RESET}"
-    echo -e "${YELLOW}Status:${RESET} ${RED}clientHold${RESET}\n\n[Ditangguhkan oleh registrar atau penyedia domain]\n"
+    echo -e "\n${RED}[Domain Status]${RESET}"
+    echo -e "${YELLOW}Status:${RESET} ${RED}clientHold${RESET}\n\n[Suspended by the registrar or domain provider]\n"
   elif [[ $domain_status == *"serverHold"* ]]; then
-    echo -e "\n${RED}[Status Domain]${RESET}"
-    echo -e "${YELLOW}Status:${RESET} ${RED}serverHold${RESET}\n\n[Ditangguhkan oleh registry]\n"
+    echo -e "\n${RED}[Domain Status]${RESET}"
+    echo -e "${YELLOW}Status:${RESET} ${RED}serverHold${RESET}\n\n[Suspended by the registry]\n"
   fi
 }
 
-# Function to check domain status registration
+# Function to check domain registration status
 check_status_registration() {
   local domain_regist=$(whois $domain | grep -Ei "(No match for domain|DOMAIN NOT FOUND|No Data Found|Domain not found|is available|The queried object does not exist|is not registered|not been registered)")
 
   if [[ -n "$domain_regist" ]]; then
-    echo "Domain belum terdaftar"
+    echo "Domain is not registered"
   else
     display_dns_info $dns_server
   fi
 }
 
-error_flag=0  # Inisialisasi variabel error_flag
+error_flag=0  # Initialize error_flag variable
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -131,7 +131,7 @@ while [[ $# -gt 0 ]]; do
         domain=$2
         shift 2
       else
-        echo -e "${RED}Opsi -d|--domain memerlukan argumen.${RESET}" >&2
+        echo -e "${RED}Option -d|--domain requires an argument.${RESET}" >&2
         error_flag=1
         break
       fi
@@ -141,7 +141,7 @@ while [[ $# -gt 0 ]]; do
         dns_server=$2
         shift 2
       else
-        echo -e "${RED}Opsi -s|--server memerlukan argumen.${RESET}" >&2
+        echo -e "${RED}Option -s|--server requires an argument.${RESET}" >&2
         error_flag=1
         break
       fi
@@ -151,7 +151,7 @@ while [[ $# -gt 0 ]]; do
       exit 0
       ;;
     *)
-      echo -e "${RED}Pilihan yang tidak valid: $1${RESET}" >&2
+      echo -e "${RED}Invalid option: $1${RESET}" >&2
       error_flag=1
       break
       ;;
@@ -163,8 +163,7 @@ if [[ $error_flag -eq 1 ]]; then
   exit 1
 fi
 
-
-# Ask the domain if domain not given using option
+# Ask for the domain if not provided using an option
 prompt_for_domain
 
 # Set default DNS server if not provided
@@ -178,14 +177,17 @@ echo -e "${YELLOW}============================\n${RESET}"
 if command -v dig &> /dev/null && command -v whois &> /dev/null; then
   check_status_registration
 elif ! command -v dig &> /dev/null && ! command -v whois &> /dev/null; then
-  echo -e "${RED}Error: Perintah 'dig' dan 'whois' tidak ditemukan.${RESET}"
-  echo "Instal 'dig' dan 'whois' terlebih dahulu sebelum menjalankan skrip ini."
+  echo -e "${RED}Error: Commands 'dig' and 'whois' not found.${RESET}"
+  echo "Install 'dig' and 'whois' before running this script."
+  exit 1
 elif ! command -v dig &> /dev/null; then
-  echo -e "${RED}Error: Perintah 'dig' tidak ditemukan.${RESET}"
-  echo "Instal 'dig' terlebih dahulu sebelum menjalankan skrip ini."
+  echo -e "${RED}Error: Command 'dig' not found.${RESET}"
+  echo "Install 'dig' before running this script."
+  exit 1
 else
-  echo -e "${RED}Error: Perintah 'whois' tidak ditemukan.${RESET}"
-  echo "Instal 'whois' terlebih dahulu sebelum menjalankan skrip ini."
+  echo -e "${RED}Error: Command 'whois' not found.${RESET}"
+  echo "Install 'whois' before running this script."
+  exit 1
 fi
 
 
