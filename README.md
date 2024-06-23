@@ -146,6 +146,23 @@ Calculate non-mail usage for a different reseller:
 - Results are displayed in gigabytes (GB) and exclude usage results smaller than 10 megabytes (MB).
 
 
+### **flood_block**
+
+This tool have function to block all ip addresses flood suspect with csf base domlog access.
+
+**Usage:**
+
+```bash
+bash flood_block.sh /var/log/apache2/domlogs/[domain_name]-ssl_log
+
+```
+
+Replace **`[domain_name]`** with the domain target of flood.
+
+---
+
+
+
 ### **Disclaimer**
 
 These tools are provided as-is and without warranty. Use them responsibly and only on systems you are authorized to access.
