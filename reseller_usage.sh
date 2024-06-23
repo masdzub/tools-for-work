@@ -30,8 +30,14 @@ for reseller in $(cut -d' ' -f2 /etc/trueuserowners | grep -v "^root$" | sort | 
     # Convert MB to GB
     total_disk_gb=$(bc <<< "scale=2; ${total_disk_mb} / 1024")
     
+    # Get the list of accounts for the reseller
+    accounts=$(whmapi1 listaccts search=${reseller} searchtype=owner --output=json | jq -r '.data.acct[] | .user')
+
+    # Count the number of accounts
+    account_count=$(echo "$accounts" | wc -l)
+
     # Append reseller and their disk usage to the temporary file
-    echo "${reseller}: ${total_disk_gb} GB" >> .resellers.tmp
+    echo "${reseller} - ${total_disk_gb} GB - ${account_count} Accounts" >> .resellers.tmp
 done
 
 # Indicate completion
