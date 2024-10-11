@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# Check if at least two arguments are provided
+if [[ "$#" -lt 2 ]]; then
+  echo "Usage: $0 <record_type> <domain1> <domain2> ... <domainN>"
+  echo "Or you can use brace expansion: $0 <record_type> ns{1..4}.example.com"
+  exit 1
+fi
+
+record_type=$1
+
+# Shift the first argument (record type) so that $@ contains only the domain names
+shift
+
+for domain in "$@"; do
+  dig "$record_type" "$domain"
+done
