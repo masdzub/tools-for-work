@@ -37,10 +37,10 @@ display_records() {
 display_a-ptr_records() {
   local record_type=$1
   local ip_addresses=$2
-  [ -z $ip_addresses ] && printf "${RED}%4s record: -${RESET}\n" ${record_type} && return
+  [ -z "${ip_addresses}" ] && printf "${RED}%4s record: -${RESET}\n" ${record_type} && return
   for ip in $ip_addresses ; do
      local ptr_info=$(dig +short -x $ip)
-     if [ -z $ptr_info ] ; then
+     if [ -z "${ptr_info}" ] ; then
         printf "${CYAN}%4s record:${RESET} %-24s \t${RED}PTR: - ${RESET}\n" ${record_type} ${ip}
     else
         printf "${CYAN}%4s record:${RESET} %-24s \t${CYAN}PTR:${RESET} %s${RESET}\n" ${record_type} ${ip} ${ptr_info}
