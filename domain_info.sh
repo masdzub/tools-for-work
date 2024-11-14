@@ -33,11 +33,18 @@ display_records() {
   fi
 }
 
-# Function to display PTR records
-display_ptr_records() {
-  local ip_address=$1
-  local ptr_info=$(dig +short -x $ip_address)
-  display_records "PTR" "$ptr_info"
+# Function to display A and PTR records
+display_a-ptr_records() {
+  local record_type=$1
+  local ip_addresses=$2
+  for ip in $ip_addresses ; do
+     local ptr_info=$(dig +short -x $ip)
+     if [ -z $ptr_info ] ; then
+        printf "${CYAN}%4s record${RESET} %-24s \t${RED}PTR: - ${RESET}\n" ${record_type} ${ip}
+    else
+        printf "${CYAN}%4s record${RESET} %-24s \t${CYAN}PTR:${RESET} %s${RESET}\n" ${record_type} ${ip} ${ptr_info}
+     fi
+  done
 }
 
 # Function to display SSL information
@@ -56,12 +63,14 @@ display_dns_info() {
   local dns_server=$1
 
   a_record=$(dig +short @$dns_server $domain A)
-  display_records "A" "$a_record"
+  display_a-ptr_records "A" "$a_record"
 
   aaaa_record=$(dig +short @$dns_server $domain AAAA)
-  display_records "AAAA" "$aaaa_record"
+  display_a-ptr_records "AAAA" "$aaaa_record"
 
-  mx_record=$(dig +short @$dns_server $domain MX)
+  echo
+
+  mx_record=$(dig +short @$dns_server $domain MX | sort -n)
   display_records "MX" "$mx_record"
 
   mail_record=$(dig +noall +answer @$dns_server mail.$domain A | awk '{print $4 "\t" $5}')
@@ -72,16 +81,6 @@ display_dns_info() {
 
   ns_record=$(dig +short @$dns_server $domain NS)
   display_records "NS" "$ns_record"
-
-  if [ -n "$a_record" ]; then
-    echo -e "\n${CYAN}[PTR Information for IPv4]${RESET}"
-    display_ptr_records "$a_record"
-  fi
-
-  if [ -n "$aaaa_record" ]; then
-    echo -e "\n${CYAN}[PTR Information for IPv6]${RESET}"
-    display_ptr_records "$aaaa_record"
-  fi
 }
 
 # Function to print help
