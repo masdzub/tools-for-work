@@ -42,7 +42,7 @@ display_ptr_records() {
 
 # Function to display SSL information
 display_ssl_info() {
-  local openssl_info=$(openssl s_client -showcerts -connect $domain:443 </dev/null 2>/dev/null | openssl x509 -noout -issuer -dates -subject 2>/dev/null)
+  local openssl_info=$(openssl s_client -showcerts -connect $domain:443 -servername $domain </dev/null 2>/dev/null | openssl x509 -noout -subject -dates -ext subjectAltName -issuer 2>/dev/null | grep -v X509v3)
   if [ $? -eq 0 ]; then
     echo -e "\n${CYAN}[SSL Information]${RESET}"
     echo "$openssl_info" | sed 's/^/  /'
@@ -64,7 +64,7 @@ display_dns_info() {
   mx_record=$(dig +short @$dns_server $domain MX)
   display_records "MX" "$mx_record"
 
-  mail_record=$(dig @$dns_server mail.$domain A | awk '/^mail/ {print $4 "\t" $5}')
+  mail_record=$(dig +noall +answer @$dns_server mail.$domain A | awk '{print $4 "\t" $5}')
   display_records "MAIL" "$mail_record"
 
   txt_record=$(dig +short @$dns_server $domain TXT)
