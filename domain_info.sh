@@ -64,7 +64,7 @@ display_dns_info() {
   mx_record=$(dig +short @$dns_server $domain MX)
   display_records "MX" "$mx_record"
 
-  mail_record=$(dig @$dns_server mail.$domain A | awk '{print $4 "\t" $5}')
+  mail_record=$(dig @$dns_server mail.$domain A | awk '/^mail/ {print $4 "\t" $5}')
   display_records "MAIL" "$mail_record"
 
   txt_record=$(dig +short @$dns_server $domain TXT)
@@ -170,6 +170,7 @@ prompt_for_domain
 dns_server=${dns_server:-$default_dns}
 
 echo -e "\n${YELLOW}============================${RESET}"
+echo -e "${CYAN}Report generated${RESET}: ${GREEN}$(date)${RESET}"
 echo -e "${CYAN}Domain Info${RESET}\t: ${GREEN}$domain${RESET}"
 echo -e "${CYAN}DNS Server\t${RESET}: ${GREEN}$dns_server${RESET}"
 echo -e "${YELLOW}============================\n${RESET}"
