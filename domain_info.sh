@@ -204,11 +204,11 @@ fi
 
 if [ -n "$a_record" ] && [ -n "$ns_record" ]; then
   display_ssl_info
-  echo -e "${YELLOW}============================\n${RESET}"
+  echo -e "${YELLOW}================================================================${n${RESET}"
 fi
 
 # Check domain status if A and NS records are missing
 if [ -z "$a_record" ] && [ -z "$ns_record" ]; then
-  echo -e "\n${YELLOW}============================${RESET}"
+  echo -e "\n${YELLOW}================================================================${RESET}"
   check_domain_status
 fi
