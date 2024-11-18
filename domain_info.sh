@@ -11,6 +11,7 @@
 #CYAN='\033[1;36m'
 #RESET='\033[0m'
 
+# ANSI color codes using tput
 RED=$(tput setaf 1)
 GREEN=$(tput setaf 2)
 YELLOW=$(tput setaf 3)
