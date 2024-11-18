@@ -5,11 +5,17 @@
 # tools for work
 
 # ANSI color codes
-RED='\033[1;31m'
-GREEN='\033[1;32m'
-YELLOW='\033[1;33m'
-CYAN='\033[1;36m'
-RESET='\033[0m'
+#RED='\033[1;31m'
+#GREEN='\033[1;32m'
+#YELLOW='\033[1;33m'
+#CYAN='\033[1;36m'
+#RESET='\033[0m'
+
+RED=$(tput setaf 1)
+GREEN=$(tput setaf 2)
+YELLOW=$(tput setaf 3)
+CYAN=$(tput setaf 6)
+RESET=$(tput sgr0)
 
 # Default DNS server for A, AAAA, MX, NS, TXT records
 default_dns="1.1.1.1"
