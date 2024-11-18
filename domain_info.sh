@@ -16,6 +16,7 @@ RED=$(tput setaf 1)
 GREEN=$(tput setaf 2)
 YELLOW=$(tput setaf 3)
 CYAN=$(tput setaf 6)
+PURPLE=$(tput setaf 5)
 RESET=$(tput sgr0)
 
 # Default DNS server for A, AAAA, MX, NS, TXT records
@@ -40,7 +41,7 @@ display_records() {
   fi
 }
 
-# Function to display A and PTR records
+# Function to display IP and PTR records
 display_a-ptr_records() {
   local record_type=$1
   local ip_addresses=$2
@@ -53,7 +54,7 @@ display_a-ptr_records() {
      if [ -z "${ptr_info}" ] ; then
         printf "  %-39s\t${RED}%s${RESET}\n" ${ip} "-"
     else
-        printf "  %-39s\t${YELLOW}%s${RESET}\n" ${ip} ${ptr_info}
+        printf "  %-39s\t${PURPLE}%s${RESET}\n" ${ip} ${ptr_info}
      fi
   done
 }
