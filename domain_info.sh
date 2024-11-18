@@ -26,10 +26,10 @@ display_records() {
   local record_type=$1
   local record_data=$2
   if [ -n "$record_data" ]; then
-    echo -e "${CYAN}$record_type record:${RESET}"
+    echo -e "\n${CYAN}$record_type record:${RESET}"
     echo "$record_data" | sed 's/^/  /'
   else
-    echo -e "${RED}$record_type record: - ${RESET}"
+    echo -e "\n${RED}$record_type record: - ${RESET}"
   fi
 }
 
@@ -38,12 +38,15 @@ display_a-ptr_records() {
   local record_type=$1
   local ip_addresses=$2
   [ -z "${ip_addresses}" ] && printf "${RED}%4s record: -${RESET}\n" ${record_type} && return
+  
+  printf "\n${CYAN}%s record:${RESET}\n" ${record_type}
+  
   for ip in $ip_addresses ; do
      local ptr_info=$(dig +short -x $ip)
      if [ -z "${ptr_info}" ] ; then
-        printf "${CYAN}%4s record:${RESET} %-24s \t${RED}PTR: - ${RESET}\n" ${record_type} ${ip}
+        printf "  %-39s\t${RED}%s${RESET}\n" ${ip} "-"
     else
-        printf "${CYAN}%4s record:${RESET} %-24s \t${CYAN}PTR:${RESET} %s${RESET}\n" ${record_type} ${ip} ${ptr_info}
+        printf "  %-39s\t${YELLOW}%s${RESET}\n" ${ip} ${ptr_info}
      fi
   done
 }
@@ -69,13 +72,11 @@ display_dns_info() {
   aaaa_record=$(dig +short @$dns_server $domain AAAA)
   display_a-ptr_records "AAAA" "$aaaa_record"
 
-  echo
+  mail_record=$(dig +noall +answer @$dns_server mail.$domain A | awk '{print $4 "\t" $5}')
+  display_records "MAIL" "$mail_record"
 
   mx_record=$(dig +short @$dns_server $domain MX | sort -n)
   display_records "MX" "$mx_record"
-
-  mail_record=$(dig +noall +answer @$dns_server mail.$domain A | awk '{print $4 "\t" $5}')
-  display_records "MAIL" "$mail_record"
 
   txt_record=$(dig +short @$dns_server $domain TXT)
   display_records "TXT" "$txt_record"
@@ -173,7 +174,7 @@ echo -e "\n${YELLOW}============================${RESET}"
 echo -e "${CYAN}Report generated${RESET}: ${GREEN}$(date)${RESET}"
 echo -e "${CYAN}Domain Info${RESET}\t: ${GREEN}$domain${RESET}"
 echo -e "${CYAN}DNS Server\t${RESET}: ${GREEN}$dns_server${RESET}"
-echo -e "${YELLOW}============================\n${RESET}"
+echo -e "${YELLOW}============================${RESET}"
 
 if command -v dig &> /dev/null && command -v whois &> /dev/null; then
   check_status_registration
