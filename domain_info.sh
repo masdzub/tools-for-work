@@ -123,11 +123,11 @@ check_domain_status() {
 # Function to check domain registration status
 check_status_registration() {
   local domain_regist=$(whois $domain | grep -Ei "(No match for domain|DOMAIN NOT FOUND|No Data Found|Domain not found|is available|The queried object does not exist|is not registered|not been registered)")
-
   if [[ -n "$domain_regist" ]]; then
-    echo "Domain is not registered"
+      echo -e "\nThe domain ${RED}is not registered${RESET}."
+      echo "Please ensure you are using the ${RED}main domain${RESET} and correct TLD, ${RED}not a subdomain${RESET}."
   else
-    display_dns_info $dns_server
+      display_dns_info $dns_server
   fi
 }
 
@@ -201,10 +201,9 @@ else
   exit 1
 fi
 
-
 if [ -n "$a_record" ]; then
   display_ssl_info
-  echo -e "${YELLOW}================================================================${n${RESET}"
+  echo -e "${YELLOW}================================================================${RESET}"
 fi
 
 # Check domain status if A and NS records are missing
