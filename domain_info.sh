@@ -177,11 +177,12 @@ prompt_for_domain
 # Set default DNS server if not provided
 dns_server=${dns_server:-$default_dns}
 
-echo -e "\n${YELLOW}============================${RESET}"
-echo -e "${CYAN}Report generated${RESET}: ${GREEN}$(date)${RESET}"
-echo -e "${CYAN}Domain Info${RESET}\t: ${GREEN}$domain${RESET}"
-echo -e "${CYAN}DNS Server\t${RESET}: ${GREEN}$dns_server${RESET}"
-echo -e "${YELLOW}============================${RESET}"
+# Print the table with enhanced and longer separators
+echo -e "\n${YELLOW}================================================================${RESET}"
+printf "${CYAN}%-20s${RESET}: ${GREEN}%s${RESET}\n" "Report generated" "$(date '+%A, %B %d, %Y at %H:%M:%S %Z')"
+printf "${CYAN}%-20s${RESET}: ${GREEN}%s${RESET}\n" "Domain Info" "$domain"
+printf "${CYAN}%-20s${RESET}: ${GREEN}%s${RESET}\n" "DNS Server" "$dns_server"
+echo -e "${YELLOW}================================================================${RESET}"
 
 if command -v dig &> /dev/null && command -v whois &> /dev/null; then
   check_status_registration
