@@ -202,7 +202,7 @@ else
 fi
 
 
-if [ -n "$a_record" ] && [ -n "$ns_record" ]; then
+if [ -n "$a_record" ]; then
   display_ssl_info
   echo -e "${YELLOW}================================================================${n${RESET}"
 fi
