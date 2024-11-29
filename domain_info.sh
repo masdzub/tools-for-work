@@ -102,9 +102,9 @@ display_dns_info() {
 print_help() {
   echo ""
   echo -e "${CYAN}Usage:${RESET} $(basename "$0") ${YELLOW}[-d domain] [-s dns_server] [-h]${RESET}"
-  echo -e "  ${YELLOW}-d domain${RESET}       Domain name to be queried"
-  echo -e "  ${YELLOW}-s dns_server${RESET}   Optional custom DNS server to query"
-  echo -e "  ${YELLOW}-h${RESET}              Display help information"
+  echo -e "${CYAN}Usage:${RESET} $(basename "$0") ${YELLOW}[domain] [@dns_server] [-h]${RESET}"
+  echo -e "  ${YELLOW}domain${RESET}       Domain name to be queried"
+  echo -e "  ${YELLOW}dns_server${RESET}   Optional custom DNS server to query"
   echo ""
   echo -e "Example Usage:"
   echo -e "  $(basename "$0") ${YELLOW}-d example.com${RESET}"
@@ -116,7 +116,7 @@ print_help() {
 bail() {
     echo "${RED}$@${RESET}" >&2
     print_help
-    exit 1
+    exit 3
 }
 
 # Function to check domain status
@@ -145,20 +145,24 @@ check_status_registration() {
 
 error_flag=0  # Initialize error_flag variable
 
-# TODO: make this handle --domain domain
-while getopts ":d:s:h" o; do
-    case "${o}" in
+# TODO: 
+# * handle "--domain domain" long options
+# * resolve bug where "$0 domain -s dns_server" is interpreted as looking up
+# "dns_server" as a domain, against the default dns server. 
+while getopts ":d:s:h" opt ; do
+    case "${opt}" in
         d)
-            [[ -z "$OPTARG" ]] && bail "Option -${o} requires an argument"
             domain=${OPTARG}
             ;;
         s)
-            [[ -z "$OPTARG" ]] && bail "Option -${o} requires an argument"
             dns_server=${OPTARG}
             ;;
         h)
             print_help
             exit 0
+            ;;
+        *)
+            bail "Invalid option or missing argument"
             ;;
     esac
 done
