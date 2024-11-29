@@ -101,15 +101,22 @@ display_dns_info() {
 # Function to print help
 print_help() {
   echo ""
-  echo -e "${CYAN}Usage:${RESET} $(basename "$0") ${YELLOW}[-d|--domain domain] [-s|--server dns_server] [-h|--help]${RESET}"
-  echo -e "  ${YELLOW}-d, --domain domain${RESET}       Domain name to be queried"
-  echo -e "  ${YELLOW}-s, --server dns_server${RESET}   Custom DNS server for A, AAAA, MX, NS, TXT records (optional)"
-  echo -e "  ${YELLOW}-h, --help${RESET}                Display help information"
+  echo -e "${CYAN}Usage:${RESET} $(basename "$0") ${YELLOW}[-d domain] [-s dns_server] [-h]${RESET}"
+  echo -e "  ${YELLOW}-d domain${RESET}       Domain name to be queried"
+  echo -e "  ${YELLOW}-s dns_server${RESET}   Optional custom DNS server to query"
+  echo -e "  ${YELLOW}-h${RESET}              Display help information"
   echo ""
   echo -e "Example Usage:"
   echo -e "  $(basename "$0") ${YELLOW}-d example.com${RESET}"
   echo -e "  $(basename "$0") ${YELLOW}-d example.com -s 1.1.1.1${RESET}"
-  exit 0
+  echo ""
+}
+
+# Function to exit
+bail() {
+    echo "${RED}$@${RESET}" >&2
+    print_help
+    exit 1
 }
 
 # Function to check domain status
@@ -138,44 +145,34 @@ check_status_registration() {
 
 error_flag=0  # Initialize error_flag variable
 
-while [[ $# -gt 0 ]]; do
-  case "$1" in
-    -d|--domain)
-      if [[ -n $2 ]]; then
-        domain=$2
-        shift 2
-      else
-        echo -e "${RED}Option -d|--domain requires an argument.${RESET}" >&2
-        error_flag=1
-        break
-      fi
-      ;;
-    -s|--server)
-      if [[ -n $2 ]]; then
-        dns_server=$2
-        shift 2
-      else
-        echo -e "${RED}Option -s|--server requires an argument.${RESET}" >&2
-        error_flag=1
-        break
-      fi
-      ;;
-    -h|--help)
-      print_help
-      exit 0
-      ;;
-    *)
-      echo -e "${RED}Invalid option: $1${RESET}" >&2
-      error_flag=1
-      break
-      ;;
-  esac
+# TODO: make this handle --domain domain
+while getopts ":d:s:h" o; do
+    case "${o}" in
+        d)
+            [[ -z "$OPTARG" ]] && bail "Option -${o} requires an argument"
+            domain=${OPTARG}
+            ;;
+        s)
+            [[ -z "$OPTARG" ]] && bail "Option -${o} requires an argument"
+            dns_server=${OPTARG}
+            ;;
+        h)
+            print_help
+            exit 0
+            ;;
+    esac
 done
 
-if [[ $error_flag -eq 1 ]]; then
-  print_help
-  exit 1
-fi
+shift $((OPTIND - 1)) # remove options processed by getopts, keep non-option arguments
+
+# process arguments that getopts didn't get (or haven't been ported up into
+# getopt yet)
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        @*) dns_server=${1#*@} ; shift ;;
+        *) domain=$1 ; shift ;;
+    esac
+done
 
 # Ask for the domain if not provided using an option
 prompt_for_domain
