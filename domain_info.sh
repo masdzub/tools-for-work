@@ -18,6 +18,7 @@ YELLOW=$(tput setaf 3)
 CYAN=$(tput setaf 6)
 PURPLE=$(tput setaf 5)
 RESET=$(tput sgr0)
+BOLD=$(tput bold)
 
 # Default DNS server for A, AAAA, MX, NS, TXT records
 default_dns="1.1.1.1"
@@ -80,8 +81,12 @@ display_dns_info() {
   aaaa_record=$(dig +short @$dns_server $domain AAAA)
   display_a-ptr_records "AAAA" "$aaaa_record"
 
+  www_record=$(dig +noall +answer @$dns_server www.$domain A | awk '{print $4 "\t" $5}')
+  display_records "WWW" "$www_record"
+
   mail_record=$(dig +noall +answer @$dns_server mail.$domain A | awk '{print $4 "\t" $5}')
   display_records "MAIL" "$mail_record"
+
 
   mx_record=$(dig +short @$dns_server $domain MX | sort -n)
   display_records "MX" "$mx_record"
@@ -181,7 +186,7 @@ dns_server=${dns_server:-$default_dns}
 # Print the table with enhanced and longer separators
 echo -e "\n${YELLOW}================================================================${RESET}"
 printf "${CYAN}%-20s${RESET}: ${GREEN}%s${RESET}\n" "Report generated" "$(date '+%A, %B %d, %Y at %H:%M:%S %Z')"
-printf "${CYAN}%-20s${RESET}: ${GREEN}%s${RESET}\n" "Domain Info" "$domain"
+printf "${CYAN}%-20s${RESET}: ${GREEN}${BOLD}%s${RESET}\n" "Domain Info" "$domain"
 printf "${CYAN}%-20s${RESET}: ${GREEN}%s${RESET}\n" "DNS Server" "$dns_server"
 echo -e "${YELLOW}================================================================${RESET}"
 
