@@ -35,10 +35,10 @@ display_records() {
   local record_type=$1
   local record_data=$2
   if [ -n "$record_data" ]; then
-    echo -e "\n${CYAN}$record_type record:${RESET}"
+    echo -e "${CYAN}$record_type record:${RESET}"
     echo "$record_data" | sed 's/^/  /'
   else
-    echo -e "\n${RED}$record_type record: - ${RESET}"
+    echo -e "${RED}$record_type record: - ${RESET}"
   fi
 }
 
@@ -46,9 +46,9 @@ display_records() {
 display_a-ptr_records() {
   local record_type=$1
   local ip_addresses=$2
-  [ -z "${ip_addresses}" ] && printf "\n${RED}%4s record: -${RESET}\n" ${record_type} && return
+  [ -z "${ip_addresses}" ] && printf "${RED}%4s record: -${RESET}\n" ${record_type} && return
   
-  printf "\n${CYAN}%s record:${RESET}\n" ${record_type}
+  printf "${CYAN}%s record:${RESET}\n" ${record_type}
   
   for ip in $ip_addresses ; do
      local ptr_info=$(dig +short -x $ip)
@@ -64,7 +64,7 @@ display_a-ptr_records() {
 display_ssl_info() {
   local openssl_info=$(openssl s_client -showcerts -connect $domain:443 -servername $domain </dev/null 2>/dev/null | openssl x509 -noout -subject -dates -ext subjectAltName -issuer 2>/dev/null | grep -v X509v3)
   if [ $? -eq 0 ]; then
-    echo -e "\n${CYAN}[SSL Information]${RESET}"
+    echo -e "${CYAN}[SSL Information]${RESET}"
     echo "$openssl_info" | sed 's/^/  /'
   else
     echo -e "${RED}No SSL information available or cannot be read for $domain on port 443.${RESET}"
@@ -117,10 +117,10 @@ check_domain_status() {
   local domain_status=$(whois $domain | grep "serverHold\|clientHold")
 
   if [[ $domain_status == *"clientHold"* ]]; then
-    echo -e "\n${RED}[Domain Status]${RESET}"
+    echo -e "${RED}[Domain Status]${RESET}"
     echo -e "${YELLOW}Status:${RESET} ${RED}clientHold${RESET}\n\n[Suspended by the registrar or domain provider]\n"
   elif [[ $domain_status == *"serverHold"* ]]; then
-    echo -e "\n${RED}[Domain Status]${RESET}"
+    echo -e "${RED}[Domain Status]${RESET}"
     echo -e "${YELLOW}Status:${RESET} ${RED}serverHold${RESET}\n\n[Suspended by the registry]\n"
   fi
 }
