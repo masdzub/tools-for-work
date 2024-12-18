@@ -148,7 +148,7 @@ error_flag=0  # Initialize error_flag variable
 # TODO: 
 # * handle "--domain domain" long options
 # * resolve bug where "$0 domain -s dns_server" is interpreted as looking up
-# "dns_server" as a domain, against the default dns server. 
+#   "dns_server" as a domain, against the default dns server. 
 while getopts ":d:s:h" opt ; do
     case "${opt}" in
         d)
