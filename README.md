@@ -162,6 +162,80 @@ Replace **`[domain_name]`** with the domain target of flood.
 ---
 
 
+# IMAP Sync Script
+
+This script syncs email accounts from one IMAP server to another using **imapsync**. The script reads a list of email credentials from a file (`email.txt`), which contains email addresses, passwords, source IMAP server addresses, and destination IMAP server addresses.
+
+---
+
+## 🛠️ Requirements
+
+* **imapsync** must be installed on your system.
+* A text file (`email.txt`) with the following format:
+
+  ```
+  email@example.com password src_server dst_server
+  ```
+
+  * `email@example.com`: The email address to sync.
+  * `password`: The password for the email account.
+  * `src_server`: The source IMAP server.
+  * `dst_server`: The destination IMAP server.
+
+---
+
+## 📝 Setup Instructions
+
+1. **Install imapsync**:
+
+   * On Linux (Debian/Ubuntu):
+
+     ```bash
+     sudo apt install imapsync
+     ```
+
+   * Or follow installation instructions [here](https://imapsync.lamiral.info/).
+
+2. **Prepare the `email.txt` file**:
+
+   Create a file called `email.txt` in the same directory as the script with the following format:
+
+   ```
+   email@example.com password src_server dst_server
+   email2@example.com password2 src_server2 dst_server2
+   ```
+
+3. **Make the script executable**:
+
+   ```bash
+   chmod +x imapsync_email.sh
+   ```
+
+4. **Run the script**:
+
+   ```bash
+   ./imapsync_email.sh
+   ```
+
+   The script will process each email, syncing it from the source IMAP server to the destination IMAP server, showing progress with a spinner and notifying you if the sync was successful or failed.
+
+---
+
+## ⚙️ Configuration
+
+* **SRC\_SERVER**: The IMAP server from which emails will be synced (can be specific per email).
+* **DST\_SERVER**: The IMAP server where emails will be synced to (can be specific per email).
+
+---
+
+## ❓ Troubleshooting
+
+* If you encounter an error stating that `imapsync` is not found, make sure it is installed correctly.
+* If there are issues with syncing, verify that the email, password, and server addresses in `email.txt` are correct.
+
+
+
+
 
 ### **Disclaimer**
 
